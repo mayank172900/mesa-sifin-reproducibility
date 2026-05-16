@@ -1334,13 +1334,13 @@ def run_ablation_experiment(config: ExperimentConfig, results_root: Path) -> pd.
         "Kimura 2026 state-dependent Hawkes": "https://arxiv.org/abs/2604.23961",
         "Szymanski & Xu 2025 nearly unstable Hawkes": "https://arxiv.org/abs/2501.11648",
         "El Karmi 2026 bivariate nearly unstable Hawkes": "https://arxiv.org/abs/2605.03703",
-        "MESA reduced-form package": "local:/Users/goodday/Documents/Projects/16may",
+        "MESA reduced-form package": "https://github.com/mayank172900/mesa-sifin-reproducibility",
     }
     code_url = {
         "Guo, Lin & Huang 2023 Attn-LOB DRL": "https://github.com/imTurkey/Market-Making-with-Deep-Reinforcement-Learning-from-Limit-Order-Books",
         "Jiang et al. 2025 Relaver latency/inventory RL": "https://anonymous.4open.science/r/Relaver_ijcai-3025/",
         "El Karmi 2025 deterministic Hawkes LOB simulator": "https://github.com/sohaibelkarmi/High-Frequency-Trading-Simulator",
-        "MESA reduced-form package": "local:/Users/goodday/Documents/Projects/16may",
+        "MESA reduced-form package": "https://github.com/mayank172900/mesa-sifin-reproducibility",
     }
     code_reality = {
         "Guo, Lin & Huang 2023 Attn-LOB DRL": "Public demo repository visible with conda_setup.yaml and main.py; license not visible in web audit.",

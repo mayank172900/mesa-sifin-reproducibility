@@ -3,7 +3,6 @@
 This is the 10-minute path to check that the core experiment package is real.
 
 ```bash
-cd /Users/goodday/Documents/Projects/16may
 PYTHONPATH=src python3 -m pytest -q
 PYTHONPATH=src python3 scripts/run_all.py --quick --jobs 8
 PYTHONPATH=src python3 scripts/fit_lobster_hawkes.py --skip-panel --validate-estimator
@@ -16,7 +15,6 @@ PYTHONPATH=src python3 scripts/replay_lobster_top_of_book.py --mode depth-priori
 PYTHONPATH=src python3 scripts/replay_lobster_deepest_public.py --levels 50 --max-events 200000
 PYTHONPATH=src python3 scripts/audit_lobster_orderbook_reconstruction.py --levels 10 --max-events 80000 --compare-every 10 --reanchor-every-events 100
 PYTHONPATH=src python3 scripts/benchmark_m_series.py --max-workers 16
-PYTHONPATH=src:. python3 scripts/validate_submission_package.py --strict
 ```
 
 Then inspect:
@@ -41,17 +39,7 @@ Then inspect:
 - `results/tables/m_series_benchmark.csv`
 - `results/tables/m_series_benchmark_environment.csv`
 - `results/tables/sota_comparison.csv`
-- `results/tables/submission_artifact_manifest.csv`
-- `paper/submission_readiness_check.md`
 - `paper/m_series_optimization_report.md`
-- `paper/siam_macro_conversion_note.md`
-- `paper/mesa_sifin_manuscript_siam.tex`
-- `paper/siam_jfm_submission_checklist.md`
-- `paper/siam_jfm_submission_metadata.md`
-- `paper/siam_jfm_ai_disclosure.md`
-- `paper/siam_jfm_cover_letter.pdf`
-- `paper/web_sota_audit.md`
-- `paper/reference_audit.md`
 - `results/tables/lobster_hawkes_fit_by_event_type.csv`
 - `results/tables/lobster_marked_hawkes_estimator_validation.csv`
 - `results/tables/lobster_timestamp_resolution_sensitivity.csv`

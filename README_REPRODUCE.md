@@ -4,9 +4,9 @@ All commands are intended to run from the repository root.
 
 ## Environment
 
-The current machine has Python 3.12 with NumPy, SciPy, Pandas, Matplotlib,
-Seaborn, PyTorch/MPS, CVXPY, and pytest available. The first paper experiments
-use NumPy/SciPy CPU paths for deterministic float64 numerics.
+Use Python 3.12 or newer with NumPy, SciPy, Pandas, Matplotlib, Seaborn,
+pytest, and `huggingface_hub`. The first paper experiments use NumPy/SciPy CPU
+paths for deterministic float64 numerics.
 
 Install missing basics if needed:
 
@@ -18,7 +18,6 @@ Portable make targets are also available:
 
 ```bash
 make test
-make validate
 make reproduce JOBS=8
 make full-reproduce JOBS=12
 ```
@@ -29,11 +28,7 @@ make full-reproduce JOBS=12
 PYTHONPATH=src:. python3 -m pytest
 ```
 
-Expected current result (quiet progress may show only dots plus `[100%]`):
-
-```text
-54 passed
-```
+Expected current result: all tests pass.
 
 ## Quick Referee Run
 
@@ -55,48 +50,7 @@ This regenerates a small grid under `results/`.
 make paper
 ```
 
-If `tectonic` or `pdflatex` is unavailable, the Codex helper used during this
-run is:
-
-```bash
-python3 /Users/goodday/.codex/skills/latex-to-pdf/scripts/compile_latex.py \
-  --tex-file paper/mesa_sifin_manuscript.tex \
-  --output-dir paper \
-  --output-name mesa_sifin_manuscript
-python3 /Users/goodday/.codex/skills/latex-to-pdf/scripts/compile_latex.py \
-  --tex-file paper/mesa_scalar_theory_appendix.tex \
-  --output-dir paper \
-  --output-name mesa_scalar_theory_appendix
-python3 /Users/goodday/.codex/skills/latex-to-pdf/scripts/compile_latex.py \
-  --tex-file paper/siam_jfm_cover_letter.tex \
-  --output-dir paper \
-  --output-name siam_jfm_cover_letter
-```
-
-## Submission Package Validator
-
-```bash
-PYTHONPATH=src:. python3 scripts/validate_submission_package.py --strict
-```
-
-Equivalent:
-
-```bash
-make validate
-```
-
-This writes:
-
-- `results/tables/submission_artifact_manifest.csv`
-- `paper/submission_readiness_check.md`
-- `paper/control_proof_completion_map.md`
-- `paper/queue_position_replay_completeness.md`
-- `paper/siam_macro_conversion_note.md`
-- `paper/mesa_sifin_manuscript_siam.tex`
-- `paper/siam_jfm_submission_checklist.md`
-- `paper/siam_jfm_submission_metadata.md`
-- `paper/siam_jfm_ai_disclosure.md`
-- `paper/siam_jfm_cover_letter.pdf`
+Install `tectonic` or `pdflatex` if you want to rebuild the PDFs locally.
 
 ## Full Local Run
 

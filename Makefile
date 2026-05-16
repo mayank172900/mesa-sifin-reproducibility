@@ -11,7 +11,7 @@ export OMP_NUM_THREADS ?= 1
 export OPENBLAS_NUM_THREADS ?= 1
 export NUMEXPR_NUM_THREADS ?= 1
 
-.PHONY: install test quick full data hawkes hawkes-size replay deepest-replay reconstruct benchmark siam-source paper validate bundle reproduce full-reproduce
+.PHONY: install test quick full data hawkes hawkes-size replay deepest-replay reconstruct benchmark paper reproduce full-reproduce
 
 install:
 	$(PYTHON) -m pip install -r requirements.txt
@@ -64,29 +64,18 @@ reconstruct:
 benchmark:
 	$(PYTHON) scripts/benchmark_m_series.py --max-workers $(M_SERIES_WORKERS)
 
-siam-source:
-	$(PYTHON) scripts/build_siam_source.py
-
-paper: siam-source
+paper:
 	@if command -v tectonic >/dev/null 2>&1; then \
 		tectonic --keep-logs --outdir paper paper/mesa_sifin_manuscript.tex; \
 		tectonic --keep-logs --outdir paper paper/mesa_scalar_theory_appendix.tex; \
-		tectonic --keep-logs --outdir paper paper/siam_jfm_cover_letter.tex; \
 	elif command -v pdflatex >/dev/null 2>&1; then \
 		pdflatex -interaction=nonstopmode -halt-on-error -output-directory=paper paper/mesa_sifin_manuscript.tex; \
 		pdflatex -interaction=nonstopmode -halt-on-error -output-directory=paper paper/mesa_scalar_theory_appendix.tex; \
-		pdflatex -interaction=nonstopmode -halt-on-error -output-directory=paper paper/siam_jfm_cover_letter.tex; \
 	else \
-		echo "Install tectonic or pdflatex, or use the Codex latex-to-pdf helper documented in README_REPRODUCE.md"; \
+		echo "Install tectonic or pdflatex to build paper PDFs."; \
 		exit 1; \
 	fi
 
-validate:
-	$(PYTHON) scripts/validate_submission_package.py --strict
+reproduce: test data quick hawkes replay reconstruct benchmark paper
 
-bundle: validate
-	$(PYTHON) scripts/build_submission_bundle.py
-
-reproduce: test data quick hawkes replay reconstruct benchmark paper validate
-
-full-reproduce: test data full hawkes replay deepest-replay reconstruct benchmark paper validate
+full-reproduce: test data full hawkes replay deepest-replay reconstruct benchmark paper

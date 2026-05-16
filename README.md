@@ -43,12 +43,6 @@ Run tests:
 PYTHONPATH=src pytest
 ```
 
-Validate the current submission bundle:
-
-```bash
-PYTHONPATH=src:. python3 scripts/validate_submission_package.py --strict
-```
-
 Benchmark local Apple Silicon/M-series throughput:
 
 ```bash
@@ -68,26 +62,15 @@ PYTHONPATH=src python3 scripts/fit_binance_hawkes.py --symbols BTCUSDT ETHUSDT S
 
 Paper-facing artifacts:
 
-- `paper/novelty_scout.md`
-- `paper/web_sota_audit.md`
-- `paper/reference_audit.md`
-- `paper/submission_readiness_check.md`
 - `paper/control_proof_completion_map.md`
 - `paper/queue_position_replay_completeness.md`
 - `paper/m_series_optimization_report.md`
-- `paper/siam_macro_conversion_note.md`
-- `paper/mesa_sifin_manuscript_siam.tex`
-- `paper/siam_jfm_submission_checklist.md`
-- `paper/siam_jfm_submission_metadata.md`
-- `paper/siam_jfm_ai_disclosure.md`
-- `paper/siam_jfm_cover_letter.pdf`
-- `paper/theory_repair.md`
 - `paper/experiment_report.md`
 - `paper/ablation_sota_report.md`
 - `paper/datasets_and_empirical_scope.md`
 - `paper/mesa_scalar_theory_appendix.pdf`
 - `paper/mesa_sifin_manuscript.pdf`
-- `paper/mesa_sifin_draft.md`
+- `mesa_sifin_ssrn_source_bundle/mesa_sifin_ssrn_full.pdf`
 - `README_REPRODUCE.md`
 - `REFEREE_QUICKSTART.md`
 
