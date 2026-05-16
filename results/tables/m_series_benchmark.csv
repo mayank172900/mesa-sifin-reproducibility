@@ -1,0 +1,9 @@
+benchmark,workers,seconds,work_units,throughput_units_per_second,checksum,note,speedup_vs_single_worker,parallel_efficiency
+spectral_resolvent,1,0.013168040997697972,240.0,18225.945684855982,23577.95841114657,8x8 Perron perturbation and resolvent kernels,,
+quote_vectorization,1,0.006117750002886169,4320000.0,706141963.6242009,4.3725914852195125,vectorized quote_offsets over inventory grids,,
+hawkes_totals,1,0.01878966599178966,819200.0,43598433.32808353,3750.0,memory-light discrete Hawkes total-count simulation,,
+parallel_spectral_resolvent,1,0.22853591598686762,160.0,700.1087741901981,16123.685534942606,process-parallel Perron perturbation and resolvent sweep,1.0,1.0
+parallel_spectral_resolvent,2,0.24499749999085907,320.0,1306.1357769444148,32134.752627068774,process-parallel Perron perturbation and resolvent sweep,1.865618351170068,0.932809175585034
+parallel_spectral_resolvent,4,0.26001945899042767,640.0,2461.354248197097,63672.24347647438,process-parallel Perron perturbation and resolvent sweep,3.515674047999322,0.8789185119998305
+parallel_spectral_resolvent,8,0.30402550000872,1280.0,4210.173159696431,126327.33239985729,process-parallel Perron perturbation and resolvent sweep,6.0135986219659285,0.7516998277457411
+parallel_spectral_resolvent,16,0.3635203750018263,2560.0,7042.246256450243,252360.48460388315,process-parallel Perron perturbation and resolvent sweep,10.058788742643411,0.6286742964152132

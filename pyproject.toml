@@ -1,0 +1,19 @@
+[project]
+name = "mesa-criticality"
+version = "0.1.0"
+description = "Experiments for MESA: robust market making under near-critical Hawkes structural uncertainty."
+requires-python = ">=3.11"
+dependencies = [
+  "numpy",
+  "scipy",
+  "pandas",
+  "matplotlib",
+  "seaborn",
+  "pytest",
+  "huggingface_hub",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"

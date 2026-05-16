@@ -1,0 +1,21 @@
+Title:           Mathematical Appendix for Structural Hawkes Ambiguity in Near-Critical Market Making
+Subject:         Mathematical appendix for spectral and control-theory details
+Keywords:        Hawkes processes, Perron theory, robust market making, structural ambiguity, HJBI, Lyapunov comparison
+Author:          Mayank Sharma
+Creator:         LaTeX with hyperref
+Producer:        xdvipdfmx (0.1)
+CreationDate:    Sat May 16 23:29:26 2026 IST
+Custom Metadata: no
+Metadata Stream: no
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           18
+Encrypted:       no
+Page size:       612 x 792 pts (letter)
+Page rot:        0
+File size:       138192 bytes
+Optimized:       no
+PDF version:     1.5

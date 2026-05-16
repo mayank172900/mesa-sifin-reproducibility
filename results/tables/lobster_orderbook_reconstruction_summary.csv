@@ -1,0 +1,7 @@
+ticker,levels,reanchor_every_events,rows_compared,events_processed,mean_level_price_match_rate,mean_top1_price_match_rate,mean_level_size_mae,mean_top1_size_mae,bid_top1_price_match_rate,ask_top1_price_match_rate,bid_top1_size_mae,ask_top1_size_mae,known_active_orders_final,known_reductions_final,anonymous_reductions_final,missing_reductions_final,hidden_executions_final,ignored_events_final,overshoot_size_final,known_added_size_final,known_reduced_size_final,anonymous_reduced_size_final
+AAPL,10,100,8000,79999,0.9003625,0.9995,25.553587500000003,0.0573125,0.9995,0.9995,0.05325,0.061375,10,41,8,0,0,0,0.0,2225.0,1872.0,318.0
+AMZN,10,100,8000,79999,0.9130687499999999,0.9994375,19.036737500000005,0.098375,0.999125,0.99975,0.041875,0.154875,22,29,17,1,1,0,0.0,4371.0,3113.0,1320.0
+GOOG,10,100,8000,79999,0.8962374999999999,0.999625,14.1099,0.12625,0.999375,0.999875,0.2525,0.0,22,29,19,0,0,0,0.0,2510.0,1419.0,886.0
+INTC,10,100,8000,79999,0.98933125,1.0,75.87807500000001,0.0,1.0,1.0,0.0,0.0,15,35,15,0,0,0,0.0,15400.0,10800.0,6801.0
+MSFT,10,100,8000,79999,0.9889249999999999,1.0,55.70363125,0.0,1.0,1.0,0.0,0.0,28,28,15,0,0,0,0.0,29502.0,14271.0,10200.0
+PANEL,10,100,40000,399995,0.937585,0.9997125,38.05638625,0.0563875,0.9996,0.9998249999999999,0.069525,0.04325,97,162,74,1,1,0,0.0,54008.0,31475.0,19525.0

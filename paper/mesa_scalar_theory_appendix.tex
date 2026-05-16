@@ -1,0 +1,1275 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,hyperref,array}
+
+\newtheorem{assumption}{Assumption}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{remark}{Remark}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\eps}{\varepsilon}
+
+\title{Scalar And Finite-Dimensional Perron Theory Appendix For MESA}
+\author{Working proof supplement}
+\date{May 16, 2026}
+
+\begin{document}
+\maketitle
+
+\section{Purpose}
+
+This appendix gives a submission-style proof of the scalar amplification result
+used by the MESA manuscript and a finite-dimensional Perron-visible
+reduced-form bridge for multitype Hawkes order flow. It also verifies the
+finite-state robust Bellman layer used by the numerical DP and a compact
+continuous-intensity HJBI verification theorem for a truncated multitype
+Hawkes control game. It also gives an untruncated Lyapunov bridge and weighted
+comparison theorem under explicit robust subcriticality and weighted boundary
+assumptions, plus a local differentiability theorem for interior robust quote
+optimizers. It intentionally proves the narrow result that the current paper
+can defend.
+
+\section{Notation Checklist}
+
+\begin{center}
+\small
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.18\linewidth}>{\raggedright\arraybackslash}p{0.28\linewidth}>{\raggedright\arraybackslash}p{0.43\linewidth}}
+\hline
+Symbol & Domain & Meaning \\
+\hline
+$\rho$ & $[0,1)$ & Scalar branching ratio or Perron root
+$\rho(\Gamma)$, depending on context. \\
+$\Gamma$ & $\R_+^{d\times d}$ & Multitype Hawkes branching matrix. \\
+$\mu,\lambda$ & $\R_+^d$ & Baseline intensity and current intensity vector. \\
+$r,\ell$ & $\R_+^d$ & Right and left Perron vectors, normalized by
+$\ell^\top r=1$. \\
+$E,E_{\rm rel},E_{\rm abs}$ & Matrix perturbations & Generic, relative-slack,
+and absolute branching-matrix perturbations. \\
+$\eps,\eps_{\rm rel}$ & positive scalars & Absolute and relative ambiguity
+radii. \\
+$V_{\rm risk},V_d,V_{\rm bi}$ & real-valued functions & Reduced risk proxies
+used to isolate the resolvent singularity. \\
+$q$ & $\{-Q,\ldots,Q\}$ & Inventory state in the Bellman and HJBI games. \\
+$K$ & compact subset of $\R_+^d$ & Truncated continuous-intensity domain. \\
+$U,\mathcal A$ & compact or finite sets & Quote/no-quote controls and
+rectangular ambiguity set. \\
+$L^{u,\Gamma},\mathcal L^{u,\Gamma}$ & generators & Finite-state and
+continuous-intensity controlled Hawkes generators. \\
+$W_v,\kappa$ & Lyapunov function and drift margin & Weighted intensity
+Lyapunov function and common subcriticality margin. \\
+$J_i,K_R$ & jump map and compact set & Untruncated Hawkes mark-$i$ jump map
+and Lyapunov sublevel truncation set $\{W_v\le R\}$. \\
+$U,V,F$ & weighted viscosity functions & Generic subsolution, supersolution,
+and solution candidate in the comparison theorem. \\
+$\delta,\theta$ & quote vector and structural parameter & Local quote action
+and finite-dimensional branching/ambiguity parameter in the optimizer
+sensitivity theorem. \\
+$\mathfrak H,\delta^*$ & reduced Hamiltonian and optimizer & Robust local
+Hamiltonian after Nature's minimization and its interior quote maximizer. \\
+$T,g,r$ & finite horizon, payoff, reward & Terminal time, terminal payoff, and
+running reward. \\
+\hline
+\end{tabular}
+\end{center}
+
+All asymptotic constants below are uniform on the compact regularity classes
+specified in the relevant theorem statements. The same letters may denote a
+scalar object in the scalar section and its multitype analogue later; each
+section restates the needed domain.
+
+\section{Scalar Hawkes Setup}
+
+Let $N_t$ be a stationary linear Hawkes process with exponential kernel
+\[
+\lambda_t = \mu + \int_0^{t^-}\beta \rho e^{-\beta(t-s)}\,dN_s,
+\qquad
+0\le \rho < 1,\quad \mu>0,\quad \beta>0.
+\]
+Here $\rho$ is the branching ratio. The stationary mean intensity is
+\[
+\bar\lambda(\rho)=\frac{\mu}{1-\rho}.
+\]
+
+We use a reduced market-making risk proxy
+\[
+V_{\mathrm{risk}}(\rho)=C(1-\rho)^{-a},
+\qquad C>0,
+\]
+where $a=2$ is the normalized-throughput variance convention used for the
+headline square-law result. If stationary throughput is allowed to enter the
+risk term separately, then $a$ may be larger; the proofs below make the exponent
+explicit.
+
+\begin{assumption}[Local quote sensitivity]
+For inventory $q$ in a compact grid and quote controls in a compact interval,
+the robust half-spread correction is locally linear in the worst-case increase
+of $V_{\mathrm{risk}}$:
+\[
+\psi_\eps(\rho)
+=K\left[\sup_{\tilde\rho\in\mathcal U_\eps(\rho)}
+V_{\mathrm{risk}}(\tilde\rho)-V_{\mathrm{risk}}(\rho)\right]
++o\left(\sup_{\tilde\rho\in\mathcal U_\eps(\rho)}
+|V_{\mathrm{risk}}(\tilde\rho)-V_{\mathrm{risk}}(\rho)|\right),
+\]
+with $K>0$ independent of $\rho$ near one.
+\end{assumption}
+
+This assumption is the scalar version of differentiating the first-order
+condition for an interior quote optimizer. The optimizer-sensitivity theorem
+below gives sufficient conditions under which it follows from a uniformly
+negative second derivative in quote space and a smooth active worst-case
+selector for the robust Hamiltonian.
+
+\section{Resolvent And Variance Scaling}
+
+\begin{lemma}[Scalar resolvent]
+For scalar Hawkes branching ratio $\rho<1$,
+\[
+(1-\rho)^{-1}
+\]
+is the scalar Hawkes resolvent. Its square scales as $(1-\rho)^{-2}$.
+\end{lemma}
+
+\begin{proof}
+The stationary mean equation is
+$\bar\lambda=\mu+\rho\bar\lambda$. Therefore
+$\bar\lambda=(1-\rho)^{-1}\mu$. The linear response of total descendants of one
+immigrant is the geometric series $\sum_{n\ge0}\rho^n=(1-\rho)^{-1}$, proving
+the resolvent identity. Squaring the leading response gives
+$(1-\rho)^{-2}$.
+\end{proof}
+
+\begin{lemma}[Derivative of the risk proxy]
+Let $V_{\mathrm{risk}}(\rho)=C(1-\rho)^{-a}$ for $a>0$. Then
+\[
+\frac{d}{d\rho}V_{\mathrm{risk}}(\rho)
+=aC(1-\rho)^{-(a+1)}.
+\]
+\end{lemma}
+
+\begin{proof}
+Direct differentiation gives
+$d(1-\rho)^{-a}/d\rho=a(1-\rho)^{-(a+1)}$.
+\end{proof}
+
+\section{Ambiguity Normalizations}
+
+We distinguish two ambiguity sets.
+
+\paragraph{Relative critical-slack ambiguity.}
+\[
+\mathcal U^{\mathrm{rel}}_\eps(\rho)
+=\{\tilde\rho:\ 0\le \tilde\rho\le \rho+\eps(1-\rho),\ \tilde\rho<1\}.
+\]
+
+\paragraph{Absolute branching-ratio ambiguity.}
+\[
+\mathcal U^{\mathrm{abs}}_\eps(\rho)
+=\{\tilde\rho:\ 0\le \tilde\rho\le \rho+\eps,\ \tilde\rho<1\}.
+\]
+
+\begin{theorem}[Relative-slack amplification]
+Fix $a>0$ and $0<\eps<1$. Under relative critical-slack ambiguity,
+\[
+\sup_{\tilde\rho\in\mathcal U^{\mathrm{rel}}_\eps(\rho)}
+V_{\mathrm{risk}}(\tilde\rho)-V_{\mathrm{risk}}(\rho)
+=C\left((1-\eps)^{-a}-1\right)(1-\rho)^{-a}.
+\]
+Consequently, for small $\eps$,
+\[
+\psi_\eps(\rho)
+=KaC\,\eps(1-\rho)^{-a}+O(\eps^2(1-\rho)^{-a})+o(\eps(1-\rho)^{-a}).
+\]
+In the normalized-throughput convention $a=2$, the premium has the square law
+$\psi_\eps(\rho)=\Theta(\eps(1-\rho)^{-2})$.
+\end{theorem}
+
+\begin{proof}
+The risk proxy is increasing in $\rho$, so Nature chooses
+$\tilde\rho^\star=\rho+\eps(1-\rho)$. Then
+\[
+1-\tilde\rho^\star = 1-\rho-\eps(1-\rho)=(1-\eps)(1-\rho).
+\]
+Substitution gives
+\[
+V_{\mathrm{risk}}(\tilde\rho^\star)-V_{\mathrm{risk}}(\rho)
+=C(1-\rho)^{-a}\left((1-\eps)^{-a}-1\right).
+\]
+The Taylor expansion
+$(1-\eps)^{-a}=1+a\eps+O(\eps^2)$ proves the small-$\eps$ expression. The
+quote-premium statement follows from local quote sensitivity. Since all
+constants are positive and independent of $\rho$ near one, the result is
+$\Theta(\eps(1-\rho)^{-a})$.
+\end{proof}
+
+\begin{theorem}[Absolute-ambiguity derivative law]
+Fix $a>0$ and suppose $\eps=o(1-\rho)$. Under absolute ambiguity,
+\[
+\sup_{\tilde\rho\in\mathcal U^{\mathrm{abs}}_\eps(\rho)}
+V_{\mathrm{risk}}(\tilde\rho)-V_{\mathrm{risk}}(\rho)
+=aC\,\eps(1-\rho)^{-(a+1)}
++O(\eps^2(1-\rho)^{-(a+2)}).
+\]
+In the normalized-throughput convention $a=2$, the premium scales as
+$\Theta(\eps(1-\rho)^{-3})$.
+\end{theorem}
+
+\begin{proof}
+Again Nature chooses $\tilde\rho^\star=\rho+\eps$ when this remains below one.
+Taylor expanding around $\rho$,
+\[
+V_{\mathrm{risk}}(\rho+\eps)-V_{\mathrm{risk}}(\rho)
+=\eps V'_{\mathrm{risk}}(\rho)
++\frac{\eps^2}{2}V''_{\mathrm{risk}}(\xi)
+\]
+for some $\xi\in(\rho,\rho+\eps)$. By the derivative lemma,
+$V'_{\mathrm{risk}}(\rho)=aC(1-\rho)^{-(a+1)}$. Also
+$V''_{\mathrm{risk}}(\xi)=a(a+1)C(1-\xi)^{-(a+2)}$. The condition
+$\eps=o(1-\rho)$ implies $1-\xi$ is comparable to $1-\rho$, giving the stated
+remainder. Local quote sensitivity transfers the scaling to $\psi_\eps$.
+\end{proof}
+
+\section{Multitype Perron Extension}
+
+\begin{proposition}[First-order Perron perturbation]
+Let $\Gamma$ be nonnegative and irreducible with simple Perron root
+$\rho<1$, normalized left/right Perron vectors $\ell^\top r=1$, and spectral
+gap bounded below. Then for a perturbation $E$,
+\[
+\rho(\Gamma+E)-\rho(\Gamma)=\ell^\top E r+O(\|E\|_F^2).
+\]
+The Frobenius-unit perturbation maximizing the first-order increase is
+$E^\star = \ell r^\top/\|\ell r^\top\|_F$.
+\end{proposition}
+
+\begin{proof}
+The first statement is the standard analytic perturbation expansion for a
+simple eigenvalue. The derivative of the Perron root in direction $E$ is
+$\ell^\top E r=\langle E,\ell r^\top\rangle_F$. Under a Frobenius norm
+constraint, Cauchy--Schwarz gives
+\[
+\langle E,\ell r^\top\rangle_F
+\le \|E\|_F\|\ell r^\top\|_F,
+\]
+with equality when $E$ is aligned with $\ell r^\top$.
+\end{proof}
+
+\begin{remark}
+This proposition justifies the Perron-aligned adversary used in the experiments
+when the leading eigenvalue is simple and well separated. It also explains why
+near-degenerate spectra are an ablation, not a nuisance parameter: the lower
+bound can weaken when Perron regularity fails.
+\end{remark}
+
+\begin{theorem}[Finite-dimensional Perron-visible ambiguity premium]
+Let $\Gamma\in\R_+^{d\times d}$ be irreducible, primitive, and subcritical
+with simple Perron root $\rho<1$. Assume a uniform spectral gap
+\[
+\rho-\max_{j>1}|\lambda_j(\Gamma)|\ge g_0>0
+\]
+and uniformly bounded Perron eigenprojection conditioning. Let $r,\ell>0$ be
+normalized by $\ell^\top r=1$. For fixed $\mu,w\in\R_+^d$, define
+\[
+V_d(\Gamma)=C\left(w^\top(I-\Gamma)^{-1}\mu\right)^2,
+\qquad C>0,
+\]
+and assume Perron visibility
+\[
+A(\Gamma):=(w^\top r)(\ell^\top\mu)\ge a_0>0.
+\]
+Then
+\[
+V_d(\Gamma)=C A(\Gamma)^2(1-\rho)^{-2}+O((1-\rho)^{-1}).
+\]
+
+If a feasible Perron-aligned relative-slack perturbation satisfies
+\[
+\rho(\Gamma+E_{\rm rel})
+=\rho+\eps_{\rm rel}(1-\rho)+O(\eps_{\rm rel}^2(1-\rho)),
+\]
+then
+\[
+V_d(\Gamma+E_{\rm rel})-V_d(\Gamma)
+=\Theta\!\left(\eps_{\rm rel}(1-\rho)^{-2}\right).
+\]
+
+If a feasible Perron-aligned absolute perturbation satisfies
+\[
+\rho(\Gamma+E_{\rm abs})=\rho+\eps+O(\eps^2),
+\qquad \eps=o(1-\rho),
+\]
+then
+\[
+V_d(\Gamma+E_{\rm abs})-V_d(\Gamma)
+=\Theta\!\left(\eps(1-\rho)^{-3}\right).
+\]
+Under the local quote-sensitivity assumption, the robust half-spread premium
+has the same respective orders.
+\end{theorem}
+
+\begin{proof}
+By the Riesz projection formula for the isolated Perron eigenvalue,
+\[
+(I-\Gamma)^{-1}=\frac{r\ell^\top}{1-\rho}+R,
+\qquad \|R\|\le C(g_0),
+\]
+where the constant is uniform on the Perron-regular class. Therefore
+\[
+w^\top(I-\Gamma)^{-1}\mu
+=\frac{(w^\top r)(\ell^\top\mu)}{1-\rho}+O(1).
+\]
+Squaring gives the displayed expansion for $V_d$ because Perron visibility
+keeps the leading coefficient bounded away from zero.
+
+For perturbations, the first-order Perron expansion gives
+\[
+\rho(\Gamma+E)-\rho(\Gamma)
+=\ell^\top E r+O(\|E\|_F^2/g_0).
+\]
+The Perron eigenvectors and the visibility coefficient vary by lower-order
+terms under the stated local perturbations. Expanding
+$(1-\rho-\Delta\rho)^{-2}-(1-\rho)^{-2}$ gives the relative-slack order when
+$\Delta\rho=\eps_{\rm rel}(1-\rho)+O(\eps_{\rm rel}^2(1-\rho))$, and the
+absolute-ambiguity derivative law when $\Delta\rho=\eps+O(\eps^2)$ with
+$\eps=o(1-\rho)$. The quote-premium statement follows from local quote
+sensitivity.
+\end{proof}
+
+\section{Finite-State Robust Bellman Bridge}
+
+This section closes one control-theoretic gap for the implemented experiment
+package. It proves the robust dynamic-programming equation for the finite
+inventory, finite-regime approximation used numerically. By itself, this
+finite-state theorem is not the continuous-intensity multitype Hawkes HJBI
+bridge; that compact bridge is stated in the next section.
+
+Let $\mathcal X$ be a finite state space whose elements encode inventory,
+cash-normalized wealth state, and a finite Hawkes-regime or intensity bin. Let
+$\mathcal U(x)$ be a nonempty finite set of admissible quote/no-quote actions
+at state $x$, and let $\mathcal A=\{\Gamma_1,\ldots,\Gamma_M\}$ be a finite
+rectangular ambiguity set of stable branching matrices. For each
+$(u,\Gamma)\in\mathcal U(x)\times\mathcal A$, let
+$L^{u,\Gamma}(x,y)$ be a conservative generator on $\mathcal X$:
+\[
+L^{u,\Gamma}(x,y)\ge0\quad (y\ne x),
+\qquad
+L^{u,\Gamma}(x,x)=-\sum_{y\ne x}L^{u,\Gamma}(x,y).
+\]
+Assume bounded running rewards $r(x,u,\Gamma)$ and bounded terminal payoff
+$g(x)$.
+
+\begin{theorem}[Finite-state robust Hawkes-regime Bellman verification]
+For horizon $T<\infty$, the rectangular robust market-making game
+\[
+\sup_{u}\inf_{\Gamma}\E\left[
+\int_t^T r(X_s,u_s,\Gamma_s)\,ds+g(X_T)
+\,\middle|\,X_t=x\right],
+\]
+where $u_s$ and $\Gamma_s$ are predictable Markov selectors from
+$\mathcal U(X_s)$ and $\mathcal A$, has a value $V(t,x)$. The value is the
+unique bounded solution of the finite HJBI system
+\[
+-\partial_t V(t,x)
+=\max_{u\in\mathcal U(x)}\min_{\Gamma\in\mathcal A}
+\left[
+r(x,u,\Gamma)+
+\sum_{y\in\mathcal X}L^{u,\Gamma}(x,y)V(t,y)
+\right],
+\qquad
+V(T,x)=g(x).
+\]
+Moreover, deterministic Markov selectors attaining the displayed finite
+maximum and minimum are optimal. The same statement holds for an explicit
+Euler time grid, where the ODE is replaced by the backward Bellman recursion.
+\end{theorem}
+
+\begin{proof}
+Because $\mathcal X$, $\mathcal U(x)$, and $\mathcal A$ are finite and rewards
+are bounded, the Hamiltonian
+\[
+H_x(v)=\max_{u\in\mathcal U(x)}\min_{\Gamma\in\mathcal A}
+\left[r(x,u,\Gamma)+\sum_y L^{u,\Gamma}(x,y)v(y)\right]
+\]
+is globally Lipschitz in $v\in\R^{|\mathcal X|}$. Indeed, for any $v,w$,
+the difference between two generator pairings is bounded by
+$2\Lambda\|v-w\|_\infty$, where
+$\Lambda=\max_{x,u,\Gamma}\sum_{y\ne x}L^{u,\Gamma}(x,y)<\infty$; taking
+finite maxima and minima preserves this Lipschitz constant. Hence the terminal
+value problem $-\dot V=H(V)$, $V(T)=g$, has a unique bounded classical solution
+by the Picard--Lindelof theorem for finite-dimensional ODEs.
+
+For a small step $\Delta t$, conditioning on the first jump of the controlled
+Markov chain gives
+\[
+V(t,x)=
+\max_u\min_\Gamma
+\left[
+r(x,u,\Gamma)\Delta t+
+\sum_y P_{\Delta t}^{u,\Gamma}(x,y)V(t+\Delta t,y)
+\right]+o(\Delta t),
+\]
+where $P_{\Delta t}^{u,\Gamma}=I+\Delta t L^{u,\Gamma}+o(\Delta t)$. Subtract
+$V(t+\Delta t,x)$, divide by $\Delta t$, and let $\Delta t\downarrow0$ to
+recover the HJBI system. Conversely, applying Dynkin's formula to the unique
+solution under arbitrary Markov selectors and using the pointwise
+max-min inequality shows that the solution dominates every admissible
+controller against worst-case Nature and is achieved by any selectors attaining
+the finite maximum and minimum. Such selectors exist because the action and
+ambiguity sets are finite. The discrete-time statement follows by the same
+one-step conditioning argument without taking the limit.
+\end{proof}
+
+\begin{remark}
+This theorem justifies the finite-scenario Bellman layer used in the code. If
+the scenario set contains Perron-aligned relative-slack perturbations, the
+finite game can express the robust quote/no-quote response to those regimes.
+The theorem does not prove the continuum multitype Hawkes HJBI or
+differentiability of the true optimizer with respect to $\Gamma$. The next
+section gives the compact continuous-intensity bridge.
+\end{remark}
+
+\section{Compact Continuous-Intensity HJBI Bridge}
+
+This section is the compact-domain layer of the multitype control proof. It
+states the compact piecewise-deterministic Markov-process HJBI theorem under
+the usual dynamic-programming and comparison hypotheses for the admissible
+control class. The next two sections remove the projection through a
+Lyapunov/tightness argument and a weighted comparison theorem, and the
+consolidated theorem below records the resulting untruncated statement.
+
+Let the state be $X_t=(q_t,\lambda_t)$, where
+$q_t\in\{-Q,\ldots,Q\}$ is inventory and
+$\lambda_t\in K\subset\R_+^d$ is the vector of Hawkes intensities. The compact
+set $K$ is interpreted as the numerical truncation domain. Between jumps,
+\[
+d\lambda_t=\beta(\mu-\lambda_t)\,dt.
+\]
+At a mark-$i$ jump, inventory changes by a bounded increment $\zeta_i(q,u)$
+and intensity is updated by a truncated Hawkes jump map
+\[
+\lambda_{t}=\Pi_K\left(\lambda_{t^-}+\beta\Gamma e_i\right),
+\]
+where $\Pi_K$ is a fixed Lipschitz projection into $K$. The market maker chooses
+$u\in U(q,\lambda)$ and Nature chooses
+$\Gamma\in\mathcal A$, where $U(q,\lambda)$ and $\mathcal A$ are compact. Let
+$\Lambda_i(q,\lambda,u,\Gamma)$ be the controlled mark intensities after quote
+placement and censoring by inventory limits. Define the generator on smooth
+test functions $\varphi$ by
+\[
+\begin{aligned}
+\mathcal L^{u,\Gamma}\varphi(q,\lambda)
+={}&\beta(\mu-\lambda)\cdot\nabla_\lambda\varphi(q,\lambda)\\
+&+\sum_{i=1}^d \Lambda_i(q,\lambda,u,\Gamma)
+\left[
+\varphi(q+\zeta_i(q,u),\Pi_K(\lambda+\beta\Gamma e_i))
+-\varphi(q,\lambda)
+\right].
+\end{aligned}
+\]
+
+\begin{assumption}[Compact Hawkes control regularity]
+The sets $K$, $\mathcal A$, and $U(q,\lambda)$ are compact, with
+$U(q,\lambda)$ having a closed graph. The ambiguity set satisfies
+$\sup_{\Gamma\in\mathcal A}\rho(\Gamma)\le\rho_{\max}<1$. The functions
+$r(q,\lambda,u,\Gamma)$, $g(q,\lambda)$, and
+$\Lambda_i(q,\lambda,u,\Gamma)$ are bounded and continuous, and are uniformly
+Lipschitz in $(q,\lambda)$ on each inventory slice. The jump map above remains
+inside $K$, and the total jump rate is uniformly bounded by $\bar\Lambda$.
+Admissible controllers are nonanticipative predictable controls; Nature's
+choice of $\Gamma$ is rectangular and predictable over time. The compact PDMP
+game satisfies the dynamic-programming principle for this admissible class, and
+bounded viscosity sub/supersolutions of the compact HJBI satisfy the standard
+comparison principle.
+\end{assumption}
+
+\begin{theorem}[Compact continuous-intensity Hawkes HJBI verification]
+Under compact Hawkes control regularity, the robust finite-horizon rectangular
+game
+\[
+V(t,q,\lambda)=
+\sup_u\inf_\Gamma
+\E\left[
+\int_t^T r(q_s,\lambda_s,u_s,\Gamma_s)\,ds+
+g(q_T,\lambda_T)
+\,\middle|\,q_t=q,\lambda_t=\lambda
+\right]
+\]
+has a bounded uniformly continuous value function. It is the unique bounded
+viscosity solution, for the compact admissible class specified above, on
+$[0,T]\times\{-Q,\ldots,Q\}\times K$ of
+\[
+-\partial_t V=
+\sup_{u\in U(q,\lambda)}\inf_{\Gamma\in\mathcal A}
+\left\{
+r(q,\lambda,u,\Gamma)+
+\mathcal L^{u,\Gamma}V(q,\lambda)
+\right\},
+\qquad
+V(T,q,\lambda)=g(q,\lambda).
+\]
+If, in addition, the value is $C^1$ in $(t,\lambda)$ on each inventory slice
+and the displayed supremum and infimum admit measurable selectors
+$u^\star(t,q,\lambda)$ and $\Gamma^\star(t,q,\lambda)$ satisfying Isaacs'
+pointwise saddle condition, then these selectors verify the game value. In the
+absence of exact selectors, measurable $\eta$-optimizers are $\eta$-optimal.
+\end{theorem}
+
+\begin{proof}
+The assumptions define a controlled piecewise-deterministic Markov process on
+the compact state space
+$\{-Q,\ldots,Q\}\times K$. Bounded rates rule out explosion, and compactness
+with continuity gives measurable selectors for the relaxed one-step
+Hamiltonians. The assumed compact PDMP dynamic-programming principle gives
+\[
+V(t,x)=
+\sup_u\inf_\Gamma
+\E\left[
+\int_t^{t+h} r(X_s,u_s,\Gamma_s)\,ds+
+V(t+h,X_{t+h})\middle|X_t=x
+\right]
+\]
+for $x=(q,\lambda)$.
+
+Let $\phi$ be a smooth test function touching $V$ from above at
+$(t,x)$. Apply the dynamic programming principle with nearly optimal controls
+over $[t,t+h]$, use the first-jump expansion for the PDMP, subtract
+$\phi(t,x)$, divide by $h$, and let $h\downarrow0$. This gives the viscosity
+subsolution inequality. The same argument with a test function touching from
+below, freezing any admissible control and allowing Nature to use a nearly
+minimizing response, gives the supersolution inequality.
+
+For comparison, the Hamiltonian is proper and uniformly Lipschitz in the value
+argument because total jump rates are bounded by $\bar\Lambda$, rewards are
+bounded, and coefficients are uniformly Lipschitz on the compact domain. The
+assumed compact comparison principle therefore implies that any bounded
+upper-semicontinuous subsolution is dominated by any bounded
+lower-semicontinuous supersolution with ordered terminal data. Perron's method
+and the dynamic programming principle give existence, hence uniqueness of the
+bounded viscosity solution.
+
+If $V$ is classically differentiable in $(t,\lambda)$, applying Dynkin's
+formula to $V(s,X_s)$ under arbitrary selectors and using the pointwise
+max-min inequalities proves that $V$ bounds the payoff from above and below.
+Selectors attaining the saddle Hamiltonian make those inequalities equalities,
+so they verify the value. Compactness gives measurable $\eta$-optimizers when
+exact selectors are unavailable, yielding $\eta$-optimal controls.
+\end{proof}
+
+\begin{remark}
+This theorem closes the compact truncated bridge conditional on the standard
+compact-PDMP dynamic-programming and comparison hypotheses stated above. The
+next theorem removes the compact intensity projection for stability and
+truncation tails. The weighted comparison section then gives the untruncated
+viscosity identification for pairs with a fixed weighted boundary condition at
+infinity, and the optimizer-sensitivity section isolates no-quote/boundary
+active-set differentiability as a separate nonsmooth control issue.
+\end{remark}
+
+\section{Untruncated Lyapunov Bridge}
+
+This section removes the artificial compact intensity projection at the level
+of nonexplosion, moment control, and truncation error. It is not a universal
+comparison theorem for every unbounded HJBI; it supplies the missing
+Lyapunov/tightness component under an explicit common subcriticality condition.
+
+Let $\lambda_t\in\R_+^d$ evolve without projection:
+\[
+d\lambda_t=\beta(\mu-\lambda_t)\,dt,
+\qquad
+\lambda_t\mapsto \lambda_t+\beta\Gamma e_i
+\quad\hbox{at a mark-}i\hbox{ jump.}
+\]
+Controls may thin or censor mark intensities, but not amplify them beyond the
+Hawkes state: assume
+\[
+0\le \Lambda_i(q,\lambda,u,\Gamma)\le \lambda_i
+\]
+for all admissible $(q,\lambda,u,\Gamma)$. This covers passive quote refusal
+and inventory censoring, which can reduce fill intensities but should not
+create order-flow arrivals ex nihilo.
+
+\begin{assumption}[Common Lyapunov subcriticality and tail integrability]
+There exist $v\in\R_+^d$ with strictly positive entries and $\kappa\in(0,1]$
+such that
+\[
+\Gamma^\top v\le (1-\kappa)v
+\]
+componentwise for every $\Gamma\in\mathcal A$. Rewards and terminal payoffs
+have at most linear Lyapunov growth:
+\[
+|r(q,\lambda,u,\Gamma)|+|g(q,\lambda)|\le C(1+v^\top\lambda)
+\]
+uniformly over the finite inventory grid and admissible controls. Fix some
+$p>1$. Since $\mathcal A$ is compact, the Hawkes jumps have uniformly bounded
+$W_v$-increments, so the $p$th Lyapunov moment calculation below is finite
+uniformly over $\mathcal A$.
+\end{assumption}
+
+\begin{theorem}[Untruncated Hawkes PDMP Lyapunov stability]
+Under common Lyapunov subcriticality, the unprojected controlled Hawkes PDMP is
+nonexplosive for every predictable admissible controller and Nature selector.
+For
+\[
+W_v(\lambda)=1+v^\top\lambda,
+\]
+its generator satisfies the uniform drift bound
+\[
+\mathcal L^{u,\Gamma}W_v(q,\lambda)
+\le
+\beta v^\top\mu-\beta\kappa\, v^\top\lambda
+\le C_0-C_1 W_v(\lambda)
+\]
+for constants $C_0,C_1>0$ depending only on
+$(\beta,\mu,v,\kappa)$. Consequently, for every finite horizon $T$ and the
+$p>1$ in the assumption,
+\[
+\sup_{u,\Gamma}\E_{q,\lambda}\left[\sup_{0\le s\le T} W_v(\lambda_s)^p\right]
+\le C_{T,p} W_v(\lambda)^p,
+\]
+and the finite-horizon value is finite in the weighted class
+$
+|V(t,q,\lambda)|\le C_T W_v(\lambda).
+$
+Moreover, if $\tau_R=\inf\{t:W_v(\lambda_t)\ge R\}$, then
+\[
+\sup_{u,\Gamma}\mathbb P_{q,\lambda}(\tau_R\le T)
+\le \frac{C_{T,p} W_v(\lambda)^p}{R^p}.
+\]
+Thus compact truncations on $\{W_v\le R\}$ approximate the untruncated game in
+probability. For linearly growing payoffs, the exit-tail contribution is
+uniformly controlled by
+\[
+\sup_{u,\Gamma}
+\E_{q,\lambda}\!\left[
+\sup_{s\le T}W_v(\lambda_s)\mathbf 1_{\{\tau_R\le T\}}
+\right]
+\le
+\frac{C_{T,p}W_v(\lambda)^p}{R^{p-1}},
+\]
+so the compact-truncation payoff error vanishes locally uniformly as
+$R\uparrow\infty$.
+\end{theorem}
+
+\begin{proof}
+For the affine test function $W_v$, the deterministic drift contributes
+\[
+\beta(\mu-\lambda)\cdot\nabla_\lambda W_v
+=\beta v^\top\mu-\beta v^\top\lambda.
+\]
+At a mark-$i$ jump, $W_v$ increases by
+$\beta v^\top\Gamma e_i$. Therefore
+\[
+\mathcal L^{u,\Gamma}W_v
+=\beta v^\top\mu-\beta v^\top\lambda
++\sum_{i=1}^d \Lambda_i(q,\lambda,u,\Gamma)\,\beta v^\top\Gamma e_i.
+\]
+Using $\Lambda_i\le\lambda_i$ and the common Lyapunov inequality gives
+\[
+\sum_i \Lambda_i v^\top\Gamma e_i
+\le
+\sum_i \lambda_i(\Gamma^\top v)_i
+\le
+(1-\kappa)\sum_i \lambda_i v_i.
+\]
+Substitution yields
+\[
+\mathcal L^{u,\Gamma}W_v
+\le
+\beta v^\top\mu-\beta\kappa v^\top\lambda.
+\]
+Since $W_v=1+v^\top\lambda$, this is the stated Foster--Lyapunov drift after
+absorbing constants.
+
+Dynkin's formula applied to $W_v(\lambda_{t\wedge\tau_R})$ gives a uniform
+first-moment bound up to $\tau_R$. Gronwall's inequality gives
+$\E W_v(\lambda_{t\wedge\tau_R})\le C_TW_v(\lambda_0)$ with constants
+independent of $R$, $u$, and $\Gamma$. Letting $R\uparrow\infty$ proves
+nonexplosion and the first-moment estimate.
+
+For the $p$th moment, apply the generator to $W_v^p$. Each mark-$i$ jump adds
+the bounded amount $c_i(\Gamma)=\beta v^\top\Gamma e_i$ to $W_v$. Taylor's
+formula gives, for $W_v\ge1$,
+\[
+(W_v+c_i)^p-W_v^p\le p c_i W_v^{p-1}+C_p W_v^{p-2}.
+\]
+The deterministic drift contributes
+$pW_v^{p-1}\beta(v^\top\mu-v^\top\lambda)$, while
+\[
+\sum_i\lambda_i c_i(\Gamma)\le \beta(1-\kappa)v^\top\lambda.
+\]
+Thus, uniformly over controls and Nature,
+\[
+\mathcal L^{u,\Gamma}W_v^p\le C_p W_v^{p-1}-p\beta\kappa W_v^p
+\le C'_p-c_p W_v^p
+\]
+after increasing constants. Dynkin's formula and Gronwall yield
+$\E W_v(\lambda_{t\wedge\tau_R})^p\le C_{T,p}W_v(\lambda_0)^p$ uniformly in
+$R$, $u$, and $\Gamma$.
+
+For the maximal estimate, write the
+stopped semimartingale decomposition
+\[
+W_v(\lambda_{t\wedge\tau_R})
+=W_v(\lambda_0)+A_{t\wedge\tau_R}+M_{t\wedge\tau_R}.
+\]
+The drift variation satisfies
+$|A_{t\wedge\tau_R}|\le C\int_0^{t\wedge\tau_R}W_v(\lambda_s)\,ds$. The
+predictable quadratic variation of $M$ is also bounded by
+$C\int_0^{t\wedge\tau_R}W_v(\lambda_s)\,ds$, because each mark-$i$ jump changes
+$W_v$ by the fixed amount $\beta v^\top\Gamma e_i$ and the total marked jump
+rate is at most $\sum_i\lambda_i$. Burkholder--Davis--Gundy with exponent $p$
+and Gronwall then
+give
+\[
+\E\sup_{s\le T}W_v(\lambda_{s\wedge\tau_R})^p\le C_{T,p}W_v(\lambda_0)^p,
+\]
+uniformly in $R$. Letting $R\uparrow\infty$ proves the displayed maximal
+moment bound.
+Markov's inequality then gives the exit bound for $\tau_R$.
+
+The value-growth statement follows by integrating the assumed linear growth of
+running rewards and terminal payoff against the moment bound. On
+$\{W_v\le R\}$, the compact HJBI theorem applies to the truncated game. The
+$p$th maximal moment and Holder's inequality give
+\[
+\E\left[
+\sup_{s\le T}W_v(\lambda_s)\mathbf 1_{\{\tau_R\le T\}}
+\right]
+\le
+\left(\E\sup_{s\le T}W_v(\lambda_s)^p\right)^{1/p}
+\mathbb P(\tau_R\le T)^{1-1/p},
+\]
+which is bounded by $C_{T,p}W_v(\lambda_0)^p/R^{p-1}$. This controls the payoff
+contribution from paths that leave the truncation set before $T$, proving
+convergence in probability and tail-controlled approximation for linearly
+growing payoffs.
+\end{proof}
+
+\begin{remark}
+If $\mathcal A$ is finite and each matrix is strictly subcritical, the common
+vector condition is easy to check by linear programming. For a general compact
+ambiguity set, it is a substantive robust-stability assumption, stronger than
+pointwise $\rho(\Gamma)<1$. This is the correct price of a uniform
+untruncated theorem.
+\end{remark}
+
+\begin{remark}
+Combining the compact HJBI theorem with the Lyapunov bridge gives an
+untruncated value approximation theorem in the weighted class: solve on
+$\{W_v\le R\}$, stop at the boundary, and let $R\uparrow\infty$. The next
+section adds the corresponding viscosity comparison theorem in the
+$W_v$-weighted class with an explicit boundary condition at infinity.
+\end{remark}
+
+\section{Weighted Comparison And Global Untruncated HJBI}
+
+This section states the sufficient comparison condition that closes the
+unbounded-domain HJBI bridge. It is deliberately explicit: without a weighted
+boundary condition at infinity, unbounded intensity states can admit spurious
+solutions.
+
+\begin{assumption}[Weighted comparison regularity]
+In addition to common Lyapunov subcriticality, assume:
+\begin{enumerate}
+\item The control graph $U(q,\lambda)$ and ambiguity set $\mathcal A$ are
+compact, and measurable $\eta$-selectors exist for the local Hamiltonian.
+\item The controlled rates $\Lambda_i(q,\lambda,u,\Gamma)$ are continuous,
+bounded above by $\lambda_i$, and locally Lipschitz in $\lambda$, uniformly on
+compact subsets and uniformly over $(u,\Gamma)$.
+\item The jump maps
+\[
+J_i(q,\lambda,u,\Gamma)=
+(q+\zeta_i(q,u),\,\lambda+\beta\Gamma e_i)
+\]
+are Lipschitz in $\lambda$ and satisfy
+\[
+W_v(J_i(q,\lambda,u,\Gamma))\le C_J W_v(\lambda).
+\]
+\item Rewards and terminal payoffs are continuous and have at most linear
+$W_v$-growth.
+\item Subsolutions $U$ and supersolutions $V$ are compared in the weighted
+class
+\[
+|U(t,q,\lambda)|+|V(t,q,\lambda)|\le C W_v(\lambda)
+\]
+and satisfy the boundary condition at infinity
+\[
+\limsup_{R\to\infty}\;
+\sup_{\substack{t\in[0,T],\,q\\ W_v(\lambda)\ge R}}
+\frac{U(t,q,\lambda)-V(t,q,\lambda)}{W_v(\lambda)}
+\le 0.
+\]
+\end{enumerate}
+\end{assumption}
+
+\begin{theorem}[Weighted comparison for the untruncated Hawkes HJBI]
+Under weighted comparison regularity, let $U$ be an upper-semicontinuous
+viscosity subsolution and $V$ a lower-semicontinuous viscosity supersolution
+of the untruncated robust Hawkes HJBI
+\[
+-\partial_t F=
+\sup_{u\in U(q,\lambda)}\inf_{\Gamma\in\mathcal A}
+\left\{
+r(q,\lambda,u,\Gamma)+\mathcal L^{u,\Gamma}F(q,\lambda)
+\right\}
+\]
+on $[0,T)\times\{-Q,\ldots,Q\}\times\R_+^d$. If
+$U(T,q,\lambda)\le V(T,q,\lambda)$ for all $(q,\lambda)$ and the weighted
+boundary condition above holds, then
+\[
+U(t,q,\lambda)\le V(t,q,\lambda)
+\]
+for every $(t,q,\lambda)$. Consequently, the untruncated robust Hawkes control
+problem has at most one viscosity solution in any subclass of the weighted
+class with a fixed boundary condition at infinity; equivalently, comparison is
+pairwise and requires the displayed weighted boundary ordering. The value
+constructed by compact truncation is the unique solution in that subclass, and
+the truncated solutions converge locally uniformly to it as $R\uparrow\infty$.
+\end{theorem}
+
+\begin{proof}
+Fix $\delta>0$ and define the strict supersolution
+\[
+V^\delta(t,q,\lambda)
+=V(t,q,\lambda)+\delta e^{a(T-t)}W_v(\lambda),
+\]
+with $a$ chosen large enough that the Lyapunov drift dominates the linear
+growth constants in the Hamiltonian. The Foster--Lyapunov inequality gives
+\[
+-\partial_t\{\delta e^{a(T-t)}W_v\}
+-\sup_u\inf_\Gamma \mathcal L^{u,\Gamma}
+\{\delta e^{a(T-t)}W_v\}
+\ge c\delta W_v(\lambda)-C\delta
+\]
+for some $c>0$ after increasing $a$. Thus $V^\delta$ is a strict
+supersolution outside a fixed compact set, and the weighted boundary condition
+implies that any positive maximum of $U-V^\delta$ occurs on
+$[0,T]\times\{-Q,\ldots,Q\}\times K_R$ for some compact Lyapunov sublevel set
+$K_R=\{W_v\le R\}$.
+
+On this compact set, apply the standard doubling-of-variables argument to
+\[
+U(t,q,\lambda)-V^\delta(s,q,\lambda')
+-\frac{|t-s|^2}{2\alpha}
+-\frac{|\lambda-\lambda'|^2}{2\varepsilon}.
+\]
+The finite inventory coordinate is discrete, so at a positive maximum it can
+be matched by taking the same $q$; otherwise the maximum over finitely many
+inventory states is handled componentwise. The viscosity inequalities at the
+maximizers, together with compactness of $U(q,\lambda)$ and $\mathcal A$, give
+nearly maximizing/minimizing controls and ambiguity selectors. Continuity and
+local Lipschitz regularity of rates, rewards, and jump maps control the drift
+and jump terms. The nonlocal terms are handled by the viscosity nonlocal
+doubling inequality:
+\[
+U(t,J_i(q,\lambda,u,\Gamma))-V^\delta(s,J_i(q,\lambda',u,\Gamma))
+\]
+is bounded by the same doubled maximum plus an
+$O(|\lambda-\lambda'|^2/\varepsilon)+o(1)$ error, because each $J_i$ is
+Lipschitz on $K_R$. Letting $\alpha,\varepsilon\downarrow0$ yields a
+contradiction to strict positivity of the maximum unless
+$\sup(U-V^\delta)\le0$.
+
+Therefore $U\le V^\delta$ for every $\delta>0$. Letting
+$\delta\downarrow0$ proves comparison. Existence follows by solving the
+compactly truncated HJBI on $K_R$, extending with stopped dynamics, and using
+the Lyapunov exit estimate from the previous theorem to pass to the limit.
+Comparison identifies every subsequential limit satisfying the same weighted
+boundary condition at infinity, so the convergence is locally uniform and the
+limit is the unique viscosity solution in that fixed-boundary subclass.
+\end{proof}
+
+\begin{remark}
+This theorem closes the untruncated HJBI comparison bridge for the model class
+in this appendix: common Lyapunov subcriticality with $p>1$ tail control,
+linear-growth rewards, compact controls/ambiguity, and a fixed weighted
+boundary behavior at infinity. It still does not prove differentiability of
+boundary or no-quote active sets, nor does it cover state-dependent, power-law,
+or empirically learned Hawkes kernels without rechecking the same weighted
+comparison assumptions.
+\end{remark}
+
+\section{Interior Quote Optimizer Sensitivity}
+
+The HJBI theorems above identify the value for the stated control class. This
+section records the additional local condition needed to connect the robust
+Hamiltonian to differentiable quote rules as the branching matrix or ambiguity
+parameter changes. It covers the smooth interior region of the implemented
+quote map; no-quote boundaries and active-set switches are intentionally
+handled as nonsmooth cases.
+
+Fix a state/adjoint tuple $z$ collecting $(t,q,\lambda)$ and the value
+increments entering the local HJBI Hamiltonian. Let $\theta\in\Theta\subset
+\R^m$ be a finite-dimensional parameterization of either $\Gamma$ itself or an
+ambiguity set centered at $\Gamma$. For a quote vector $\delta\in D\subset
+\R^k$, define the reduced robust Hamiltonian
+\[
+\mathfrak H(\delta,\theta;z)
+=\inf_{\Gamma'\in\mathcal A(\theta)}
+\mathcal H(\delta,\Gamma';z),
+\]
+where $\mathcal H$ is the local reward-plus-generator expression in the HJBI.
+
+\begin{assumption}[Smooth interior robust optimizer]
+For the fixed $z$, assume there are neighborhoods of
+$(\delta_0,\theta_0)$ such that:
+\begin{enumerate}
+\item $D$ is open around $\delta_0$, and the admissible quote constraints are
+inactive in that neighborhood.
+\item Nature has a unique active minimizer
+$\Gamma^\dagger(\delta,\theta;z)$, and this selector is $C^1$ in
+$(\delta,\theta)$.
+\item The reduced Hamiltonian $\mathfrak H$ is $C^2$ in $\delta$ and has
+continuous mixed derivative $D^2_{\delta\theta}\mathfrak H$.
+\item The quote objective is uniformly strictly concave:
+\[
+D^2_{\delta\delta}\mathfrak H(\delta,\theta;z)\preceq -m I_k
+\]
+for some $m>0$ throughout the neighborhood.
+\item $\delta_0$ is the unique local maximizer at $\theta_0$, so
+$D_\delta\mathfrak H(\delta_0,\theta_0;z)=0$.
+\end{enumerate}
+\end{assumption}
+
+\begin{theorem}[Interior optimizer differentiability]
+Under the smooth interior robust optimizer assumption, there exists a
+neighborhood $N$ of $\theta_0$ and a unique interior maximizer
+$\delta^*(\theta;z)$ in the corresponding quote neighborhood. The map
+$\theta\mapsto\delta^*(\theta;z)$ is $C^1$ on $N$, and
+\[
+D_\theta\delta^*(\theta_0;z)
+=
+-\left[
+D^2_{\delta\delta}\mathfrak H(\delta_0,\theta_0;z)
+\right]^{-1}
+D^2_{\delta\theta}\mathfrak H(\delta_0,\theta_0;z).
+\]
+In the one-dimensional half-spread case, if $e$ is a Perron-adverse structural
+direction and
+\[
+D^2_{\delta\theta}\mathfrak H(\delta_0,\theta_0;z)e\ge0,
+\]
+then $D_\theta\delta^*(\theta_0;z)e\ge0$; the robust interior half-spread
+widens to first order in that adverse direction.
+\end{theorem}
+
+\begin{proof}
+By the smooth active-minimizer assumption and the envelope/Danskin theorem,
+the reduced Hamiltonian has the stated derivatives in a neighborhood of
+$(\delta_0,\theta_0)$. Define
+\[
+G(\delta,\theta)=D_\delta\mathfrak H(\delta,\theta;z).
+\]
+The first-order condition at the reference point is $G(\delta_0,\theta_0)=0$.
+The derivative of $G$ with respect to $\delta$ is
+$D^2_{\delta\delta}\mathfrak H(\delta_0,\theta_0;z)$, which is nonsingular
+because it is negative definite. The implicit function theorem therefore gives
+a unique $C^1$ function $\delta^*(\theta;z)$ solving
+$G(\delta^*(\theta;z),\theta)=0$ locally. Strict concavity makes that critical
+point the unique local maximizer. Differentiating the identity
+$G(\delta^*(\theta;z),\theta)=0$ gives the displayed formula. In dimension
+one, the denominator $D^2_{\delta\delta}\mathfrak H$ is negative, so the sign
+of the directional derivative agrees with the sign of
+$D^2_{\delta\theta}\mathfrak H e$. This proves the widening statement.
+\end{proof}
+
+\begin{remark}
+The theorem is local by design. If the optimal quote hits a no-quote boundary,
+if a cap such as $\delta\le\delta_{\max}$ binds, or if two worst-case Hawkes
+matrices exchange activity, the optimizer may have only one-sided directional
+derivatives or a kink. Those cases are consistent with the implemented
+liquidity-guard policy, but they should be reported as nonsmooth active-set
+behavior rather than as classical differentiability.
+\end{remark}
+
+\section{Consolidated Multitype Control Theorem}
+
+The preceding sections are intentionally modular because compact verification,
+untruncated stability, comparison, and quote sensitivity require different
+assumptions. The theorem below states the end-to-end control result that the
+manuscript may cite.
+
+\begin{theorem}[End-to-end multitype Hawkes HJBI/control result]
+Consider the finite-horizon robust market-making game with finite inventory
+grid, exponential $d$-type Hawkes intensity state $\lambda\in\R_+^d$, compact
+quote/no-quote control graph, compact rectangular ambiguity set $\mathcal A$,
+controlled mark rates bounded by the Hawkes intensity state, and continuous
+rewards and terminal payoff with at most linear $W_v$-growth. Suppose common
+Lyapunov subcriticality with the $p>1$ tail-integrability condition and
+weighted comparison regularity hold, and compare candidate viscosity solutions
+only in a $W_v$-weighted subclass with the same stated boundary condition at
+infinity. Then:
+\begin{enumerate}
+\item the controlled Hawkes PDMP is nonexplosive for every admissible
+controller and Nature selector;
+\item the robust finite-horizon value is finite in the $W_v$-weighted class;
+\item the value is the unique viscosity solution, in that weighted class and
+with the fixed stated boundary condition at infinity, of the untruncated
+multitype Hawkes HJBI equation;
+\item compact Lyapunov-sublevel truncations converge locally uniformly to the
+untruncated value as the truncation radius tends to infinity;
+\item if the untruncated value is classically differentiable, has the same
+$W_v$-growth, its generator is integrable under the selected localized
+dynamics, and the Isaacs saddle selectors exist with admissible localization
+limits, then those selectors verify the untruncated game value; and
+\item on smooth interior quote regions satisfying the smooth interior robust
+optimizer assumption--inactive quote constraints, a unique $C^1$ active
+worst-case structural selector, a $C^2$ reduced Hamiltonian with continuous
+mixed derivative, uniformly negative quote Hessian, and a unique local
+maximizer--the robust quote map is $C^1$ in the branching/ambiguity parameter
+and its derivative is given by the implicit-function formula above.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Items 1 and 2 are exactly the Lyapunov stability theorem: the common
+subcritical vector gives the Foster--Lyapunov drift bound, nonexplosion,
+$p>1$ finite weighted maximal moments, and finite linearly growing payoffs.
+Item 3 follows from the weighted comparison theorem, which proves comparison for
+upper-semicontinuous subsolutions and lower-semicontinuous supersolutions in
+the $W_v$-weighted class with the boundary condition at infinity; existence is
+obtained by the compact truncation construction. The boundary condition at
+infinity is a condition on the compared candidate solutions, not a consequence
+of pointwise subcriticality alone. Item 4 is the local-uniform convergence
+conclusion of the same comparison-plus-truncation argument, using stopped
+Lyapunov-sublevel games and the Lyapunov exit estimate to control paths that
+leave compact sublevel sets; it does not identify projected-boundary controls
+with stopped-boundary controls without this localization error bound. Item 5
+is the classical verification argument localized at $\tau_R$, followed by
+Dynkin's formula, the max--min inequalities, the weighted moment bounds, and
+then $R\uparrow\infty$ under the stated generator integrability and selector
+localization assumptions. Item 6 is exactly the interior optimizer
+differentiability theorem, with its smooth active-minimizer and strict
+concavity hypotheses included explicitly in the theorem statement.
+\end{proof}
+
+\section{Bivariate Perron Bridge}
+
+This section records the bivariate bridge theorem used by the manuscript. It is
+still a reduced-form risk-premium theorem, not a complete HJBI proof, but it
+upgrades the scalar statement to the smallest genuinely multitype Hawkes
+setting.
+
+Let
+\[
+\Gamma =
+\begin{pmatrix}
+\gamma_{11} & \gamma_{12}\\
+\gamma_{21} & \gamma_{22}
+\end{pmatrix}
+\]
+be nonnegative, irreducible, and subcritical with Perron root
+$\rho=\rho(\Gamma)<1$. Let $r,\ell>0$ be right/left Perron vectors normalized
+by $\ell^\top r=1$. Let the second eigenvalue be $\eta$, and assume a fixed
+gap condition along a near-critical sequence,
+\[
+\rho\uparrow1,\qquad |\rho-\eta|\ge g_0>0.
+\]
+For two-type order flow with baseline $\mu\in\R^2_+$, the stationary intensity
+is
+\[
+\bar\lambda=(I-\Gamma)^{-1}\mu.
+\]
+For a reduced market-making risk direction $w\in\R^2_+$, define
+\[
+V_{\mathrm{bi}}(\Gamma)
+ =
+C\left(w^\top (I-\Gamma)^{-1}\mu\right)^2,
+\qquad C>0.
+\]
+We work on a compact Perron-regular class with uniformly bounded eigenprojection
+conditioning and Perron visibility bounded below:
+\[
+A:=(w^\top r)(\ell^\top\mu)\ge a_0>0.
+\]
+
+\begin{lemma}[Bivariate resolvent decomposition]
+Under the bivariate assumptions above,
+\[
+(I-\Gamma)^{-1}
+ =
+\frac{r\ell^\top}{1-\rho}
++R_\eta,
+\qquad
+\|R_\eta\|\le C_\eta,
+\]
+where $C_\eta$ depends only on the spectral gap, vector normalization,
+eigenprojection conditioning, and a compact upper bound on $\|\Gamma\|$.
+\end{lemma}
+
+\begin{proof}
+Because $\Gamma$ is a real $2\times2$ matrix with simple Perron root and
+separated second eigenvalue, the spectral projection onto the Perron eigenspace
+is $P=r\ell^\top$. The complementary projection is $I-P$. On the Perron
+subspace, $(I-\Gamma)^{-1}$ has eigenvalue $(1-\rho)^{-1}$. On the complementary
+one-dimensional subspace, the resolvent has eigenvalue $(1-\eta)^{-1}$ times a
+bounded projection. Since $|\rho-\eta|\ge g_0$ and $\rho<1$, the complementary
+term is uniformly bounded on the stated compact class. This gives the
+decomposition.
+\end{proof}
+
+\begin{lemma}[Bivariate risk singularity]
+Under the same assumptions,
+\[
+V_{\mathrm{bi}}(\Gamma)
+ =
+C A^2(1-\rho)^{-2}
+ +O((1-\rho)^{-1}).
+\]
+Consequently $V_{\mathrm{bi}}(\Gamma)=\Theta((1-\rho)^{-2})$ as
+$\rho\uparrow1$.
+\end{lemma}
+
+\begin{proof}
+By the resolvent decomposition,
+\[
+w^\top(I-\Gamma)^{-1}\mu
+=
+\frac{(w^\top r)(\ell^\top\mu)}{1-\rho}
++ w^\top R_\eta \mu
+=
+\frac{A}{1-\rho}+O(1).
+\]
+Squaring yields
+\[
+\left(\frac{A}{1-\rho}+O(1)\right)^2
+=
+A^2(1-\rho)^{-2}+O((1-\rho)^{-1})+O(1).
+\]
+Since $A>0$, the leading term is nonzero and proves the stated singularity.
+\end{proof}
+
+\begin{assumption}[Perron-coefficient regularity]
+For the local perturbation paths below, the Perron visibility coefficient
+\[
+A(\Gamma):=(w^\top r(\Gamma))(\ell(\Gamma)^\top\mu)
+\]
+does not cancel the gap singularity. Concretely, for relative-slack paths we
+assume $A(\Gamma+E_{\mathrm{rel}})=A(\Gamma)+o(\eps_{\mathrm{rel}})$, and for
+absolute paths we assume $A(\Gamma+E_{\mathrm{abs}})=A(\Gamma)+o(\eps)$. A
+sufficient special case is a spectral path that changes the Perron root while
+holding the Perron eigendirections fixed to first order.
+\end{assumption}
+
+\begin{theorem}[Perron-aligned bivariate relative-slack premium]
+Let $E_{\mathrm{rel}}$ be a perturbation for which
+\[
+\rho(\Gamma+E_{\mathrm{rel}})
+=
+\rho+\eps_{\mathrm{rel}}(1-\rho)+O(\eps_{\mathrm{rel}}^2(1-\rho)),
+\]
+and suppose $\Gamma+E_{\mathrm{rel}}$ remains in the same compact bivariate
+Perron-regular class with Perron visibility bounded below and satisfying
+Perron-coefficient regularity. Then
+\[
+V_{\mathrm{bi}}(\Gamma+E_{\mathrm{rel}})
+-V_{\mathrm{bi}}(\Gamma)
+=
+2CA^2\eps_{\mathrm{rel}}(1-\rho)^{-2}
++O(\eps_{\mathrm{rel}}^2(1-\rho)^{-2})
++o(\eps_{\mathrm{rel}}(1-\rho)^{-2})
++O(\eps_{\mathrm{rel}}(1-\rho)^{-1}).
+\]
+In particular, the leading singular order is
+$\Theta(\eps_{\mathrm{rel}}(1-\rho)^{-2})$. Under local quote sensitivity, a
+finite ambiguity set that contains and activates this Perron-aligned adversary
+has the same square-law half-spread order.
+\end{theorem}
+
+\begin{proof}
+The bivariate risk singularity gives
+\[
+V_{\mathrm{bi}}(\Gamma)=C A^2(1-\rho)^{-2}+O((1-\rho)^{-1}).
+\]
+The perturbed gap satisfies
+\[
+1-\rho(\Gamma+E_{\mathrm{rel}})
+=(1-\eps_{\mathrm{rel}})(1-\rho)+O(\eps_{\mathrm{rel}}^2(1-\rho)).
+\]
+Uniform Perron visibility and compactness keep the leading coefficient bounded
+above and below. Therefore the leading change is the same calculation as in the
+scalar relative-slack theorem with $a=2$:
+\[
+C A^2(1-\rho)^{-2}\{(1-\eps_{\mathrm{rel}})^{-2}-1\}
+=
+2 C A^2\eps_{\mathrm{rel}}(1-\rho)^{-2}
++O(\eps_{\mathrm{rel}}^2(1-\rho)^{-2}).
+\]
+The lower bound follows because $A$ is bounded away from zero and the
+Perron-coefficient regularity prevents first-order cancellation; the
+complementary resolvent term is lower order. Local quote sensitivity transfers
+the order to the half-spread correction.
+\end{proof}
+
+\begin{theorem}[Perron-aligned bivariate absolute-ambiguity derivative law]
+Let $E_{\mathrm{abs}}$ satisfy
+\[
+\rho(\Gamma+E_{\mathrm{abs}})
+=\rho+\eps+O(\eps^2),
+\qquad \eps=o(1-\rho),
+\]
+and suppose the perturbed matrices remain in the same bivariate Perron-regular
+class with Perron visibility bounded below and satisfying Perron-coefficient
+regularity. Then
+\[
+V_{\mathrm{bi}}(\Gamma+E_{\mathrm{abs}})
+-V_{\mathrm{bi}}(\Gamma)
+=
+2CA^2\eps(1-\rho)^{-3}
++O(\eps^2(1-\rho)^{-4})
++o(\eps(1-\rho)^{-3})
++O(\eps(1-\rho)^{-2}).
+\]
+In particular, the leading singular order is
+$\Theta(\eps(1-\rho)^{-3})$. Under local quote sensitivity, a finite ambiguity
+set that contains and activates this Perron-aligned adversary has the same
+derivative-law half-spread order.
+\end{theorem}
+
+\begin{proof}
+Using the same leading expansion,
+\[
+V_{\mathrm{bi}}(\Gamma+\!E_{\mathrm{abs}})-V_{\mathrm{bi}}(\Gamma)
+=
+C A^2\left((1-\rho-\eps+O(\eps^2))^{-2}
+-(1-\rho)^{-2}\right)
++O(\eps(1-\rho)^{-2}).
+\]
+Since $\eps=o(1-\rho)$, a Taylor expansion of $x^{-2}$ at $x=1-\rho$ gives
+\[
+(1-\rho-\eps)^{-2}-(1-\rho)^{-2}
+=
+2\eps(1-\rho)^{-3}+O(\eps^2(1-\rho)^{-4}).
+\]
+The $O(\eps(1-\rho)^{-2})$ contribution from the bounded complementary resolvent
+and the $o(\eps(1-\rho)^{-3})$ contribution from the Perron coefficient are
+lower order. Positivity of the aligned Perron coefficient gives the matching
+lower bound. Local quote sensitivity again transfers the order.
+\end{proof}
+
+\begin{remark}[How to realize the perturbations]
+The first-order Perron perturbation proposition gives a concrete construction:
+take $E$ proportional to the Frobenius-normalized Perron direction
+$\ell r^\top$. Then
+\[
+\rho(\Gamma+tE)-\rho(\Gamma)=t\langle E,\ell r^\top\rangle_F+O(t^2),
+\]
+so choosing $t=O(\eps_{\mathrm{rel}}(1-\rho))$ gives the relative theorem and
+choosing $t=O(\eps)$ gives the absolute theorem. This is exactly the adversarial
+direction used in the matrix-resolvent experiments.
+\end{remark}
+
+\section{Conclusion}
+
+The square-law statement is correct only after defining the ambiguity radius
+relative to the remaining critical slack or to an already-normalized risk
+quantity. If $\eps$ is an absolute branching-matrix radius, the robust premium
+inherits one additional derivative of the critical singularity. The same
+distinction holds in the bivariate Perron-visible setting. This appendix
+therefore converts the original MESA claim into precise, testable scalar and
+bivariate theorem statements.
+
+\end{document}

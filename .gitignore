@@ -1,0 +1,49 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Local/raw market data are intentionally not versioned.
+data/
+
+# Temporary build and scratch outputs.
+tmp/
+files/
+*.download/
+
+# Packaged archives can be regenerated from tracked files.
+Archive.zip
+files.zip
+dist/
+*.zip
+
+# Internal scratch reviews/memos not needed for the public reproduction repo.
+MESA_Adversarial_Review.md
+MESA_Theory_Repair_Memo.md
+
+# Extra low-level local derivatives beyond the curated reproducibility bundle.
+results/raw/*_aggtrades_1s.csv
+results/raw/lobster_*_binned_events.csv
+results/raw/*_reps.csv
+results/raw/policy_path_wealth.csv
+results/tables/binance_aggtrades_hawkes_cross_date_fixed_beta.csv
+results/tables/lobster_[A-Z]*_*_sanity_summary.csv
+results/tables/proof_check_appendix.md
+results/tables/run_manifest.csv
+
+# LaTeX/build intermediates.
+*.aux
+*.log
+*.out
+*.toc
+*.xdv
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Local environments.
+.venv/
+venv/
+env/

@@ -1,0 +1,11 @@
+key,value
+python,3.12.5
+platform,macOS-26.4-arm64-arm-64bit
+processor,arm
+cpu_count,18
+max_workers_tested,16
+numpy,2.2.6
+VECLIB_MAXIMUM_THREADS,1
+OMP_NUM_THREADS,1
+OPENBLAS_NUM_THREADS,1
+NUMEXPR_NUM_THREADS,1

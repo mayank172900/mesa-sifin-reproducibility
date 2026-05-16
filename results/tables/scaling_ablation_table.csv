@@ -1,0 +1,7 @@
+policy,baseline,mean_slope,min_r2,ablation_family
+absolute_gamma_derivative,scalar,-3.0,0.9999999999999998,scaling
+matrix_resolvent,block,-3.212923236773173,0.9966264142633876,scaling
+matrix_resolvent,near_degenerate,-3.2019344119442925,0.9955998887383694,scaling
+matrix_resolvent,rank1,-3.1912085025712313,0.997703005345054,scaling
+matrix_resolvent,sparse,-3.2829549756357395,0.9879464466848136,scaling
+minimal_relative_slack,scalar,-1.9999999999999993,0.9999999999999996,scaling

@@ -1,0 +1,19 @@
+Title:           Structural Hawkes Ambiguity in Near-Critical Market Making
+Subject:         SSRN full-text working paper with mathematical appendix
+Keywords:        Hawkes processes, robust market making, structural ambiguity, near-critical order flow, viscosity solutions, limit order books, queue-position risk
+Author:          Mayank Sharma
+Producer:        pypdf
+Custom Metadata: no
+Metadata Stream: no
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           43
+Encrypted:       no
+Page size:       612 x 792 pts (letter)
+Page rot:        0
+File size:       2782806 bytes
+Optimized:       no
+PDF version:     1.5
