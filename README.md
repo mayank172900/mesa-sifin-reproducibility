@@ -31,6 +31,26 @@ The current code focuses on a defensible first paper:
 - public Binance BTCUSDT/ETHUSDT/SOLUSDT aggregate-trade event panels with
   one-second clustering summaries and fixed-beta Hawkes diagnostics.
 
+Layout:
+
+```text
+src/mesa/                       mesa package: Hawkes simulation, spectral, control, DP, calibration, replay
+scripts/                        Entry points: run_all.py, data fetchers, Hawkes fits, LOBSTER replays, benchmark
+tests/                          pytest suite
+results/                        Committed raw/, tables/ and figures/ outputs (indexed in README_REPRODUCE.md)
+paper/                          Manuscript and appendix (TeX and PDF) and experiment reports
+mesa_sifin_ssrn_source_bundle/  SSRN version: TeX, PDFs, and a copy of results/figures
+Makefile                        test, quick, full, data, hawkes, replay, paper, reproduce targets
+DATA_AVAILABILITY.md            What data is and is not included
+```
+
+The SSRN version is titled "Structural Hawkes Ambiguity in Near-Critical
+Market Making"; `mesa_sifin_ssrn_full.pdf` is its main text followed by the
+appendix. `paper/mesa_sifin_manuscript.pdf` is a separate manuscript build
+titled "Structural Ambiguity Amplification in Near-Critical Hawkes Market
+Making". `configs/default.json` is not read by the scripts; run settings come
+from `ExperimentConfig` in `src/mesa/experiments.py`.
+
 Run everything:
 
 ```bash
